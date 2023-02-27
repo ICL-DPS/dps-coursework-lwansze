@@ -1,4 +1,6 @@
 #pragma once
+#include "Sort.hpp"
+#include <stdlib.h>
 namespace {
 using namespace facebook::velox;
 using namespace datagenerator;
@@ -62,6 +64,17 @@ public:
 
   bool needsInput() const override { return !noMoreInput_; }
 
+  //DELETE LATER!!
+  // function to print the array
+  void printArray(std::vector<std::pair<int64_t, int64_t>>& v, int size) {
+    int i;
+    for (i = 0; i < size; i++)
+      std::cout << "(" << v[i].first << ", " <<v[i].second <<")";
+    std::cout << std::endl;
+  }
+  //DELETE
+
+
   // Called every time your operator needs to produce data. It processes the
   // input saved in `input_` and returns a new RowVector.
   RowVectorPtr getOutput() override {
@@ -88,6 +101,21 @@ public:
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
+
+    quickSort(input0, 0, input0.size()-1, 1);
+    quickSort(input1, 0, input1.size()-1, 0);
+    
+    auto res = sortMergeJoin(input0, input1);
+    for (int i=0; i < res.size(); i++){
+      firstResultColumn.push_back(res[i].first);
+      secondResultColumn.push_back(res[i].second);
+    }
+    std::cout << "input0: ";
+    printArray(input0, input0.size());
+    std::cout << "input1: ";
+    printArray(input1, input1.size());
+    printArray(res, res.size());
+
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
