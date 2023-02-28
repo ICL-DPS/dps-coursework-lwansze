@@ -61,6 +61,7 @@ void quickSort(VectorOfPairs& v, int low, int high, int on_elem) {
 }
 
 // Sort-Merge Join -------------
+
 // Given 2 sorted input tables with schema (a,b) & (c,d), joins on b == c
 VectorOfPairs sortMergeJoin(VectorOfPairs& vec1, VectorOfPairs& vec2){
     VectorOfPairs result;

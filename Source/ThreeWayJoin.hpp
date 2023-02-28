@@ -1,5 +1,5 @@
 #pragma once
-#include "Sort.hpp"
+#include "SortMergeJoin.hpp"
 #include <stdlib.h>
 namespace {
 using namespace facebook::velox;
@@ -64,15 +64,15 @@ public:
 
   bool needsInput() const override { return !noMoreInput_; }
 
-  //DELETE LATER!!
-  // function to print the array
+
+  // FOR DEBUGGING: function to print the array
   void printArray(std::vector<std::pair<int64_t, int64_t>>& v, int size) {
     int i;
     for (i = 0; i < size; i++)
       std::cout << "(" << v[i].first << ", " <<v[i].second <<")";
     std::cout << std::endl;
   }
-  //DELETE
+  // DELETE LATER
 
 
   // Called every time your operator needs to produce data. It processes the
@@ -99,24 +99,33 @@ public:
     //=============================================
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-
-    quickSort(input0, 0, input0.size()-1, 1);
-    quickSort(input1, 0, input1.size()-1, 0);
     
-    auto res = sortMergeJoin(input0, input1);
+
+    // Convert table (a,b) from RowVector to std::vector
+    std::vector<std::pair<int64_t, int64_t>> table_a;
+    for(auto i = 0u; i < buffer->size(); i++) {
+      table_a.emplace_back(buffer->valueAtFast(i), buffer2->valueAtFast(i));
+    }
+
+    // Sort tables (a,b) and (c,d) before sort-merge join
+    quickSort(table_a, 0, table_a.size()-1, 1);
+    quickSort(input0, 0, input1.size()-1, 0);
+
+    // Perform Sort-Merge join and store result in res
+    auto res = sortMergeJoin(table_a, input0);
     for (int i=0; i < res.size(); i++){
       firstResultColumn.push_back(res[i].first);
       secondResultColumn.push_back(res[i].second);
     }
+
+    // Print statements for debugging
+    std::cout << "table_a: ";
+    printArray(table_a, table_a.size());
     std::cout << "input0: ";
     printArray(input0, input0.size());
-    std::cout << "input1: ";
-    printArray(input1, input1.size());
     printArray(res, res.size());
 
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
+
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     //=============================================
