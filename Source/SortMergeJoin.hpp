@@ -6,36 +6,6 @@ using VectorOfPairs = std::vector<std::pair<int64_t, int64_t>>;
 
 // Quicksort & Associated Helper Functions --------------
 
-// Given 2 pairs a and b, returns 1 if a > b, 0 if a == b and -1 if a < b
-// If on_elem == 0; first element in the pair is compared first
-// If on_elem == 1; second element in the pair is compared first
-// int compare_pair(std::pair<int64_t, int64_t> a, std::pair<int64_t, int64_t> b, int on_elem){
-//     int a_f = a.first, a_s = a.second;
-//     int b_f = b.first, b_s = b.second;
-//     if(on_elem) {
-//         // Compare on second element in pair first
-//         if((a_s > b_s) || (a_s == b_s && a_f > b_f)){
-//             return 1;
-//         } else if ((a_s < b_s) || (a_s == b_s && a_f < b_f)){
-//             return -1;
-//         } else {
-//             return 0;
-//         }
-//         // return a_s > b_s ? 1 
-//         //                  : a_s < b_s ? -1 : 0;
-//     } else{
-//         // Compare on first element in pair first
-//         if((a_f > b_f) || (a_f == b_f && a_s > b_s)){
-//             return 1;
-//         } else if ((a_f < b_f) || (a_f == b_f && a_s < b_s)){
-//             return -1;
-//         } else {
-//             return 0;
-//         }
-//         // return a_f > b_f ? 1 : a_f < b_f ? -1 : 0;
-//     }
-// }
-
 int partition(VectorOfPairs& v, int low, int high, int on_elem){
     std::pair<int64_t, int64_t> pivot = v[high];
     int i = low-1;

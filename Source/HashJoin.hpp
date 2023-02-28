@@ -1,6 +1,4 @@
-#include <iostream>
 #include <vector>
-#include <utility>
 #include <optional>
 
 using VectorOfPairs = std::vector<std::pair<int64_t, int64_t>>;
@@ -22,6 +20,7 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
   // Building hash table
   for (int i = 0; i < buildSide.size(); i++) {
     auto& tuple = buildSide[i];
+    // Hash function: modulo tableSize
     size_t pos = abs(int(tuple.first % tableSize));
     size_t step = 1;
     while (hashTable[pos % tableSize].has_value()) {

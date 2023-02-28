@@ -90,8 +90,8 @@ public:
     auto currentInput = std::move(input_);
 
     std::vector<int64_t> firstResultColumn, secondResultColumn;
-    auto buffer = currentInput->childAt(0)->template asFlatVector<int64_t>();
-    auto buffer2 = currentInput->childAt(1)->template asFlatVector<int64_t>();
+    auto buffer_a = currentInput->childAt(0)->template asFlatVector<int64_t>();
+    auto buffer_b = currentInput->childAt(1)->template asFlatVector<int64_t>();
 
     // make sure the inputs are ordered correctly
     auto& table_cd = inputNames[0].first == "c" ? inputs[0] : inputs[1]; // c, d
@@ -100,38 +100,26 @@ public:
     //=============================================
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    
+  
 
     // Convert table (a,b) from RowVector to std::vector
     VectorOfPairs table_ab;
-    for(auto i = 0u; i < buffer->size(); i++) {
-      table_ab.emplace_back(buffer->valueAtFast(i), buffer2->valueAtFast(i));
+    for(auto i = 0u; i < buffer_a->size(); i++) {
+      table_ab.emplace_back(buffer_a->valueAtFast(i), buffer_b->valueAtFast(i));
     }
 
-    // Sort tables (a,b), (c,d) and (e,f) before joins
+    // Perform Hash Join on (c, d) and (e, f)
+    auto table_cf = hashJoin(table_ef, table_cd); 
+    // Sort (a, b) and (c, f) before merging
     quickSort(table_ab, 0, table_ab.size()-1, 1);
-    quickSort(table_cd, 0, table_cd.size()-1, 0);
-    // quickSort(table_ef, 0, table_ef.size()-1, 0);
-
-    // Perform Sort-Merge join and store result in res (a,d)
-    auto table_ad = sortMergeJoin(table_ab, table_cd); 
-    // Perform Hash Join and store result in table_af (a,f)
-    auto table_af = hashJoin(table_ef, table_ad); 
+    quickSort(table_cf, 0, table_cf.size()-1, 0);
+    // Perform Sort-Merge Join on (a, b) and (c, f)
+    auto table_af = sortMergeJoin(table_ab, table_cf);
 
     for (int i=0; i < table_af.size(); i++){
       firstResultColumn.push_back(table_af[i].first);
       secondResultColumn.push_back(table_af[i].second);
     }
-
-    // Print statements for debugging
-    /* std::cout << "table_ab: ";
-    printArray(table_ab, table_ab.size());
-    std::cout << "table_cd: ";
-    printArray(table_cd, table_cd.size());
-    printArray(table_ad, table_ad.size()); 
-
-    std::cout << "table_ef: ";
-    printArray(table_ef, table_ef.size()); */
 
 
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
