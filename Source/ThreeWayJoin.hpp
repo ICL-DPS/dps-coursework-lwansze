@@ -1,5 +1,6 @@
 #pragma once
 #include "SortMergeJoin.hpp"
+#include "HashJoin.hpp"
 #include <stdlib.h>
 namespace {
 using namespace facebook::velox;
@@ -93,8 +94,8 @@ public:
     auto buffer2 = currentInput->childAt(1)->template asFlatVector<int64_t>();
 
     // make sure the inputs are ordered correctly
-    auto& input0 = inputNames[0].first == "c" ? inputs[0] : inputs[1];
-    auto& input1 = inputNames[0].first != "c" ? inputs[0] : inputs[1];
+    auto& input0 = inputNames[0].first == "c" ? inputs[0] : inputs[1]; // c, d
+    auto& input1 = inputNames[0].first != "c" ? inputs[0] : inputs[1]; // e, f
 
     //=============================================
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
@@ -112,10 +113,13 @@ public:
     quickSort(input0, 0, input1.size()-1, 0);
 
     // Perform Sort-Merge join and store result in res
-    auto res = sortMergeJoin(table_a, input0);
-    for (int i=0; i < res.size(); i++){
-      firstResultColumn.push_back(res[i].first);
-      secondResultColumn.push_back(res[i].second);
+    auto res = sortMergeJoin(table_a, input0); // a, d
+
+    auto res2 = hashJoin(input1, res); // a, f
+
+    for (int i=0; i < res2.size(); i++){
+      firstResultColumn.push_back(res2[i].first);
+      secondResultColumn.push_back(res2[i].second);
     }
 
     // Print statements for debugging
@@ -124,6 +128,9 @@ public:
     std::cout << "input0: ";
     printArray(input0, input0.size());
     printArray(res, res.size());
+
+    std::cout << "input1: ";
+    printArray(input1, input1.size());
 
 
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
