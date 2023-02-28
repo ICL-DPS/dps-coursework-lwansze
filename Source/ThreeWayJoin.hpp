@@ -94,8 +94,8 @@ public:
     auto buffer2 = currentInput->childAt(1)->template asFlatVector<int64_t>();
 
     // make sure the inputs are ordered correctly
-    auto& input0 = inputNames[0].first == "c" ? inputs[0] : inputs[1]; // c, d
-    auto& input1 = inputNames[0].first != "c" ? inputs[0] : inputs[1]; // e, f
+    auto& table_cd = inputNames[0].first == "c" ? inputs[0] : inputs[1]; // c, d
+    auto& table_ef = inputNames[0].first != "c" ? inputs[0] : inputs[1]; // e, f
 
     //=============================================
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
@@ -103,35 +103,35 @@ public:
     
 
     // Convert table (a,b) from RowVector to std::vector
-    std::vector<std::pair<int64_t, int64_t>> table_a;
+    VectorOfPairs table_ab;
     for(auto i = 0u; i < buffer->size(); i++) {
-      table_a.emplace_back(buffer->valueAtFast(i), buffer2->valueAtFast(i));
+      table_ab.emplace_back(buffer->valueAtFast(i), buffer2->valueAtFast(i));
     }
 
     // Sort tables (a,b), (c,d) and (e,f) before joins
-    quickSort(table_a, 0, table_a.size()-1, 1);
-    quickSort(input0, 0, input0.size()-1, 0);
-    quickSort(input1, 0, input1.size()-1, 0);
+    quickSort(table_ab, 0, table_ab.size()-1, 1);
+    quickSort(table_cd, 0, table_cd.size()-1, 0);
+    quickSort(table_ef, 0, table_ef.size()-1, 0);
 
     // Perform Sort-Merge join and store result in res (a,d)
-    auto res = sortMergeJoin(table_a, input0); 
-    // Perform Hash Join and store result in res2 (a,f)
-    auto res2 = hashJoin(input1, res); 
+    auto table_ad = sortMergeJoin(table_ab, table_cd); 
+    // Perform Hash Join and store result in table_af (a,f)
+    auto table_af = hashJoin(table_ef, table_ad); 
 
-    for (int i=0; i < res2.size(); i++){
-      firstResultColumn.push_back(res2[i].first);
-      secondResultColumn.push_back(res2[i].second);
+    for (int i=0; i < table_af.size(); i++){
+      firstResultColumn.push_back(table_af[i].first);
+      secondResultColumn.push_back(table_af[i].second);
     }
 
     // Print statements for debugging
-    /* std::cout << "table_a: ";
-    printArray(table_a, table_a.size());
-    std::cout << "input0: ";
-    printArray(input0, input0.size());
-    printArray(res, res.size()); 
+    /* std::cout << "table_ab: ";
+    printArray(table_ab, table_ab.size());
+    std::cout << "table_cd: ";
+    printArray(table_cd, table_cd.size());
+    printArray(table_ad, table_ad.size()); 
 
-    std::cout << "input1: ";
-    printArray(input1, input1.size()); */
+    std::cout << "table_ef: ";
+    printArray(table_ef, table_ef.size()); */
 
 
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!

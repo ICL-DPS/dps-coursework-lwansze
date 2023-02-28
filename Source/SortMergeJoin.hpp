@@ -81,8 +81,7 @@ VectorOfPairs sortMergeJoin(VectorOfPairs& vec1, VectorOfPairs& vec2){
             auto writeRightInput = vec2[writeRightI];
             
             while (leftInput.second == writeRightInput.first){
-                std::pair p = std::make_pair(leftInput.first, writeRightInput.second);
-                result.push_back(p);
+                result.emplace_back(leftInput.first, writeRightInput.second);
                 if(++writeRightI < vec2.size()){
                     writeRightInput = vec2[writeRightI];
                 } else {
