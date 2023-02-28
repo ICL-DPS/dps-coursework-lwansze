@@ -110,11 +110,12 @@ public:
 
     // Sort tables (a,b) and (c,d) before sort-merge join
     quickSort(table_a, 0, table_a.size()-1, 1);
-    quickSort(input0, 0, input1.size()-1, 0);
+    quickSort(input0, 0, input0.size()-1, 0);
 
     // Perform Sort-Merge join and store result in res
     auto res = sortMergeJoin(table_a, input0); // a, d
 
+    quickSort(input1, 0, input1.size()-1, 0);
     auto res2 = hashJoin(input1, res); // a, f
 
     for (int i=0; i < res2.size(); i++){
