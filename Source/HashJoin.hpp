@@ -26,7 +26,7 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
   // building hash table
   for (int i = 0; i < buildSide.size(); i++) {
     auto& tuple = buildSide[i];
-    size_t pos = abs(int(tuple.second % tableSize));
+    size_t pos = abs(int(tuple.first % tableSize));
     size_t step = 1;
     while (hashtable[pos % tableSize].has_value()) {
       // quadratic probing with triangle numbers
@@ -42,12 +42,12 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
   // probing hash table
   for (int i = 0; i < probeSide.size(); i++) {
     auto& tuple = probeSide[i];
-    size_t pos = abs(int(tuple.first % tableSize));
+    size_t pos = abs(int(tuple.second % tableSize));
     size_t step = 1;
     while (hashtable[pos % tableSize].has_value()) {
       auto& entry = hashtable[pos % tableSize].value();
-      if (entry.second == tuple.first) {
-        result.emplace_back(entry.first, tuple.second);
+      if (entry.first == tuple.second) {
+        result.emplace_back(tuple.first, entry.second);
       }
       pos += step;
       step++;
@@ -57,8 +57,8 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
   for (int i = 0; i < tableSize; i++) {
     int64_t a = -1; int64_t b = -1;
     if (hashtable[i].has_value()) {
-      a = hashtable[i].value().first;
-      b = hashtable[i].value().second;
+      a = hashtable[i].value().second;
+      b = hashtable[i].value().first;
     }
       printf("%ld, %ld\n", a, b);
   }
