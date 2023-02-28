@@ -108,15 +108,15 @@ public:
       table_a.emplace_back(buffer->valueAtFast(i), buffer2->valueAtFast(i));
     }
 
-    // Sort tables (a,b) and (c,d) before sort-merge join
+    // Sort tables (a,b), (c,d) and (e,f) before joins
     quickSort(table_a, 0, table_a.size()-1, 1);
     quickSort(input0, 0, input0.size()-1, 0);
-
-    // Perform Sort-Merge join and store result in res
-    auto res = sortMergeJoin(table_a, input0); // a, d
-
     quickSort(input1, 0, input1.size()-1, 0);
-    auto res2 = hashJoin(input1, res); // a, f
+
+    // Perform Sort-Merge join and store result in res (a,d)
+    auto res = sortMergeJoin(table_a, input0); 
+    // Perform Hash Join and store result in res2 (a,f)
+    auto res2 = hashJoin(input1, res); 
 
     for (int i=0; i < res2.size(); i++){
       firstResultColumn.push_back(res2[i].first);
@@ -124,14 +124,14 @@ public:
     }
 
     // Print statements for debugging
-    std::cout << "table_a: ";
+    /* std::cout << "table_a: ";
     printArray(table_a, table_a.size());
     std::cout << "input0: ";
     printArray(input0, input0.size());
-    printArray(res, res.size());
+    printArray(res, res.size()); 
 
     std::cout << "input1: ";
-    printArray(input1, input1.size());
+    printArray(input1, input1.size()); */
 
 
     // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!

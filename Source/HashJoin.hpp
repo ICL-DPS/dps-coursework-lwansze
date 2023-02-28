@@ -21,7 +21,6 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
   // hash table size should be at least twice the size of table 1
   tableSize <<= 1;
   std::vector<std::optional<std::pair<int64_t, int64_t>>> hashtable (tableSize);
-  std::cout << "table size is " << tableSize << std::endl;
 
   // building hash table
   for (int i = 0; i < buildSide.size(); i++) {
@@ -54,6 +53,7 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
     }
   }
   
+  /* Print Statements for debugging
   for (int i = 0; i < tableSize; i++) {
     int64_t a = -1; int64_t b = -1;
     if (hashtable[i].has_value()) {
@@ -61,7 +61,7 @@ VectorOfPairs hashJoin(VectorOfPairs& buildSide, VectorOfPairs& probeSide) {
       b = hashtable[i].value().first;
     }
       printf("%ld, %ld\n", a, b);
-  }
+  } */
     
   return result;
 }
