@@ -111,7 +111,7 @@ public:
     // Sort tables (a,b), (c,d) and (e,f) before joins
     quickSort(table_ab, 0, table_ab.size()-1, 1);
     quickSort(table_cd, 0, table_cd.size()-1, 0);
-    quickSort(table_ef, 0, table_ef.size()-1, 0);
+    // quickSort(table_ef, 0, table_ef.size()-1, 0);
 
     // Perform Sort-Merge join and store result in res (a,d)
     auto table_ad = sortMergeJoin(table_ab, table_cd); 
