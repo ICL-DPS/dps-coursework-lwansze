@@ -97,3 +97,49 @@ TEST_CASE("Correctness in context of plan") {
 
   REQUIRE(multiWayResult == referenceResult);
 }
+
+TEST_CASE("Correctness for case where an input table has identical pairs") {
+  auto firstTable = generateTable({"a", "b"}, 300, 8);
+  auto secondTable = generateIdenticalTable({"c", "d"}, 251);
+  auto thirdTable = generateTable({"e", "f"}, 47, 25);
+
+  aggregate::prestosql::registerAllAggregateFunctions();
+
+  auto referenceResult =
+      getResult(makeCountByNode(getReferencePlan(firstTable, secondTable, thirdTable), "a"));
+  auto multiWayResult =
+      getResult(makeCountByNode(getMultiWayPlan(firstTable, secondTable, thirdTable), "a"));
+
+  REQUIRE(multiWayResult == referenceResult);
+}
+
+TEST_CASE("Correctness for case with two tables where all pairs are joined") {
+  auto firstTable = generateTable({"a", "b"}, 300, 8);
+  auto secondTable = generateIdenticalTable({"c", "d"}, 251, 1, 2);
+  auto thirdTable = generateIdenticalTable({"e", "f"}, 47, 2, 1);
+
+  aggregate::prestosql::registerAllAggregateFunctions();
+
+  auto referenceResult =
+      getResult(makeCountByNode(getReferencePlan(firstTable, secondTable, thirdTable), "a"));
+  auto multiWayResult =
+      getResult(makeCountByNode(getMultiWayPlan(firstTable, secondTable, thirdTable), "a"));
+
+  REQUIRE(multiWayResult == referenceResult);
+}
+
+TEST_CASE("Correctness for case with one empty table") {
+  auto firstTable = generateTable({"a", "b"}, 0, 0);
+  auto secondTable = generateTable({"c", "d"}, 251, 9);
+  auto thirdTable = generateTable({"e", "f"}, 47, 25);
+  aggregate::prestosql::registerAllAggregateFunctions();
+
+  auto referenceResult =
+      getResult(makeCountByNode(getReferencePlan(firstTable, secondTable, thirdTable), "a"));
+  auto multiWayResult =
+      getResult(makeCountByNode(getMultiWayPlan(firstTable, secondTable, thirdTable), "a"));
+
+  REQUIRE(multiWayResult == referenceResult);
+}
+
+
