@@ -65,17 +65,6 @@ public:
 
   bool needsInput() const override { return !noMoreInput_; }
 
-
-  // FOR DEBUGGING: function to print the array
-  void printArray(std::vector<std::pair<int64_t, int64_t>>& v, int size) {
-    int i;
-    for (i = 0; i < size; i++)
-      std::cout << "(" << v[i].first << ", " <<v[i].second <<")";
-    std::cout << std::endl;
-  }
-  // DELETE LATER
-
-
   // Called every time your operator needs to produce data. It processes the
   // input saved in `input_` and returns a new RowVector.
   RowVectorPtr getOutput() override {
@@ -93,14 +82,9 @@ public:
     auto buffer_a = currentInput->childAt(0)->template asFlatVector<int64_t>();
     auto buffer_b = currentInput->childAt(1)->template asFlatVector<int64_t>();
 
-    // make sure the inputs are ordered correctly
-    auto& table_cd = inputNames[0].first == "c" ? inputs[0] : inputs[1]; // c, d
-    auto& table_ef = inputNames[0].first != "c" ? inputs[0] : inputs[1]; // e, f
-
-    //=============================================
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-  
+    // Make sure the inputs are ordered correctly
+    auto& table_cd = inputNames[0].first == "c" ? inputs[0] : inputs[1]; 
+    auto& table_ef = inputNames[0].first != "c" ? inputs[0] : inputs[1]; 
 
     // Convert table (a,b) from RowVector to std::vector
     VectorOfPairs table_ab;
@@ -120,11 +104,6 @@ public:
       firstResultColumn.push_back(table_af[i].first);
       secondResultColumn.push_back(table_af[i].second);
     }
-
-
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    // HERE IS WHERE YOUR IMPLEMENTATION SHOULD GO!!!
-    //=============================================
 
     inputs.clear();
     if(firstResultColumn.size() == 0)

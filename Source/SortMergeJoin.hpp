@@ -4,36 +4,42 @@
 using namespace std;
 using VectorOfPairs = std::vector<std::pair<int64_t, int64_t>>;
 
-// Quicksort & Associated Helper Functions --------------
+// Quicksort  ====================
 
-int partition(VectorOfPairs& v, int low, int high, int on_elem){
-    std::pair<int64_t, int64_t> pivot = v[high];
-    int i = low-1;
-    for (int j = low; j < high; j++) {
-        if (on_elem && pivot.second > v[j].second || !on_elem && pivot.first > v[j].first) {
-            // Smaller than pivot, so swap
-            i++;
-            std::swap(v[i], v[j]);
-        }
+// on_elem determines the sorting order of the input (vector of pairs)
+// if on_elem == 0; sort using the first element in each pair, then sort using the second element
+// if on_elem == 1; sort using the second element in each pair first, then sort using the first element
+void quickSort(std::vector<std::pair<int64_t, int64_t>> &v, int low, int high,
+               int on_elem) {
+  int i = low, j = high;
+  // Pivot as middle element
+  std::pair<int64_t, int64_t> pivot = v[int((low + high) / 2)];
+  // Partition
+  while (i <= j) {
+    while (on_elem && pivot.second > v[i].second ||
+           !on_elem && pivot.first > v[i].first) {
+      i++;
     }
-    if (i + 1 < v.size()-1){
-        std::swap(v[i + 1], v[high]);
+    while (on_elem && pivot.second < v[j].second ||
+           !on_elem && pivot.first < v[j].first) {
+      j--;
     }
-    // Return partition point
-    return (i + 1);
+    if (i <= j) {
+      std::swap(v[j], v[i]);
+      i++;
+      j--;
+    }
+  }
+  // Recursion on left or right of pivot
+  if (low < j) {
+    quickSort(v, low, j, on_elem);
+  }
+  if(i < high) {
+    quickSort(v, i, high, on_elem);
+  }
 }
 
-void quickSort(VectorOfPairs& v, int low, int high, int on_elem) {
-    if (low < high) {
-        int p = partition(v, low, high, on_elem);
-        // Recurse on the left of pivot
-        quickSort(v, low, p - 1, on_elem);
-        // Recurse on the right of pivot
-        quickSort(v, p + 1, high, on_elem);
-    }
-}
-
-// Sort-Merge Join -------------
+// Sort-Merge Join ====================
 
 // Given 2 sorted input tables with schema (a,b) & (c,d), joins on b == c
 VectorOfPairs sortMergeJoin(VectorOfPairs& vec1, VectorOfPairs& vec2){
@@ -52,7 +58,6 @@ VectorOfPairs sortMergeJoin(VectorOfPairs& vec1, VectorOfPairs& vec2){
             // Write to output
             auto writeRightI = rightI;
             auto writeRightInput = vec2[writeRightI];
-            
             while (leftInput.second == writeRightInput.first){
                 result.emplace_back(leftInput.first, writeRightInput.second);
                 if(++writeRightI < vec2.size()){
